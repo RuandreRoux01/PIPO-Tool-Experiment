@@ -1,6 +1,6 @@
 // DFU Demand Transfer Management Application
-// Version: 2.16.0 - Build: 2025-08-05-variant-display-fix
-// Fixed variant count display and improved DFU list scrolling
+// Version: 2.17.0 - Build: 2025-08-05-date-format-fix
+// Fixed Calendar.week date format in exported Excel files
 
 class DemandTransferApp {
     constructor() {
@@ -27,8 +27,8 @@ class DemandTransferApp {
     }
     
     init() {
-        console.log('🚀 DFU Demand Transfer App v2.16.0 - Build: 2025-08-05-variant-display-fix');
-        console.log('📋 Fixed variant count display and improved DFU list scrolling');
+        console.log('🚀 DFU Demand Transfer App v2.17.0 - Build: 2025-08-05-date-format-fix');
+        console.log('📋 Fixed Calendar.week date format in exported Excel files');
         this.render();
         this.attachEventListeners();
     }
@@ -1213,8 +1213,32 @@ class DemandTransferApp {
     
     exportData() {
         try {
+            // Create a copy of the data with formatted dates
+            const formattedData = this.rawData.map(record => {
+                const formattedRecord = { ...record };
+                
+                // Format Calendar.week if it exists
+                if (formattedRecord['Calendar.week']) {
+                    // Convert the date string to just YYYY-MM-DD format
+                    const dateValue = formattedRecord['Calendar.week'];
+                    if (dateValue) {
+                        // Handle both Date objects and ISO strings
+                        const date = new Date(dateValue);
+                        if (!isNaN(date.getTime())) {
+                            // Format as YYYY-MM-DD
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            formattedRecord['Calendar.week'] = `${year}-${month}-${day}`;
+                        }
+                    }
+                }
+                
+                return formattedRecord;
+            });
+            
             const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(this.rawData);
+            const ws = XLSX.utils.json_to_sheet(formattedData);
             XLSX.utils.book_append_sheet(wb, ws, 'Updated Demand');
             XLSX.writeFile(wb, 'Updated_Demand_Data.xlsx');
             this.showNotification('Data exported successfully');
@@ -1312,8 +1336,8 @@ class DemandTransferApp {
                             </p>
                         </div>
                         <div class="text-right text-xs text-gray-400">
-                            <p>Version 2.16.0</p>
-                            <p>Build: 2025-08-05-variant-display-fix</p>
+                            <p>Version 2.17.0</p>
+                            <p>Build: 2025-08-05-date-format-fix</p>
                         </div>
                     </div>
                 </div>
