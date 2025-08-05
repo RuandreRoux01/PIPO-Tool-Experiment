@@ -22,6 +22,7 @@ class DemandTransferApp {
         this.variantCycleDates = {}; // Store SOS/EOS data: { dfuCode: { partCode: { sos: date, eos: date } } }
         this.hasVariantCycleData = false; // Flag to check if cycle data is loaded
         this.keepZeroVariants = true; // Flag to keep variants with 0 demand visible
+        this.searchDebounceTimer = null; // Debounce timer for search input
         
         this.init();
     }
@@ -457,6 +458,16 @@ class DemandTransferApp {
             this.filteredDFUs = this.multiVariantDFUs;
         }
         this.render();
+        
+        // Restore focus to search input after render
+        setTimeout(() => {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.focus();
+                // Move cursor to end of input
+                searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+            }
+        }, 10);
     }
     
     filterByPlantLocation(plantLocation) {
