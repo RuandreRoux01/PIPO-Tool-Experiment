@@ -7,8 +7,8 @@ const cycleFileInput = document.getElementById('cycleFileInput');
                 }
             });
         }// DFU Demand Transfer Management Application
-// Version: 2.13.0 - Build: 2025-08-05-show-zero-variants
-// Show variants with 0 demand after transfer
+// Version: 2.14.0 - Build: 2025-08-05-fix-zero-variants
+// Fixed zero variants display by preserving original variants list
 
 class DemandTransferApp {
     constructor() {
@@ -35,8 +35,8 @@ class DemandTransferApp {
     }
     
     init() {
-        console.log('🚀 DFU Demand Transfer App v2.13.0 - Build: 2025-08-05-show-zero-variants');
-        console.log('📋 Show variants with 0 demand after transfer');
+        console.log('🚀 DFU Demand Transfer App v2.14.0 - Build: 2025-08-05-fix-zero-variants');
+        console.log('📋 Fixed zero variants display by preserving original variants list');
         this.render();
         this.attachEventListeners();
     }
@@ -636,6 +636,14 @@ class DemandTransferApp {
         const dfuData = this.multiVariantDFUs[dfuCode];
         const { dfuColumn, partNumberColumn, demandColumn, calendarWeekColumn, sourceLocationColumn } = dfuData;
         
+        // IMPORTANT: Store all original variants BEFORE any modifications
+        const originalVariants = new Set();
+        const dfuRecords = this.rawData.filter(record => record[dfuColumn] === dfuCode);
+        dfuRecords.forEach(record => {
+            originalVariants.add(record[partNumberColumn].toString());
+        });
+        console.log('Original variants before transfer:', Array.from(originalVariants));
+        
         let transferCount = 0;
         const transferHistory = []; // Track all transfers for audit trail
         const timestamp = new Date().toLocaleString('en-GB', { 
@@ -962,7 +970,7 @@ class DemandTransferApp {
 
         // CRITICAL: Consolidate records FIRST before recalculating UI data
         console.log('Step 1: Consolidating records...');
-        this.consolidateRecords(dfuCode);
+        this.consolidateRecords(dfuCode, originalVariants);
         
         // THEN clear cached data and recalculate
         console.log('Step 2: Clearing cached data...');
@@ -997,7 +1005,7 @@ class DemandTransferApp {
         }, 300);
     }
     
-    consolidateRecords(dfuCode) {
+    consolidateRecords(dfuCode, originalVariants = null) {
         console.log(`Consolidating records for DFU ${dfuCode}`);
         
         // Get the column information from the current DFU data
@@ -1015,11 +1023,14 @@ class DemandTransferApp {
         
         console.log(`Found ${dfuRecords.length} records for DFU ${dfuCode} before consolidation`);
         
-        // Get all unique part numbers for this DFU (to ensure we keep all variants)
-        const allPartNumbers = new Set();
-        dfuRecords.forEach(record => {
-            allPartNumbers.add(record[partNumberColumn].toString());
-        });
+        // Use provided original variants or extract from current records
+        const allPartNumbers = originalVariants || new Set();
+        if (!originalVariants) {
+            dfuRecords.forEach(record => {
+                allPartNumbers.add(record[partNumberColumn].toString());
+            });
+        }
+        console.log('All part numbers to preserve:', Array.from(allPartNumbers));
         
         // Create a map of consolidated records
         const consolidatedMap = new Map();
@@ -1278,8 +1289,8 @@ class DemandTransferApp {
                             </p>
                         </div>
                         <div class="text-right text-xs text-gray-400">
-                            <p>Version 2.13.0</p>
-                            <p>Build: 2025-08-05-show-zero-variants</p>
+                            <p>Version 2.14.0</p>
+                            <p>Build: 2025-08-05-fix-zero-variants</p>
                         </div>
                     </div>
                 </div>
