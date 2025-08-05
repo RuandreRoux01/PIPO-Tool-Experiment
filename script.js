@@ -7,8 +7,8 @@ const cycleFileInput = document.getElementById('cycleFileInput');
                 }
             });
         }// DFU Demand Transfer Management Application
-// Version: 2.11.0 - Build: 2025-08-05-undo-fix
-// Fixed undo function to properly restore original data
+// Version: 2.12.0 - Build: 2025-08-05-keep-zero-variants
+// Keep source variants visible with 0 demand after transfer
 
 class DemandTransferApp {
     constructor() {
@@ -29,13 +29,14 @@ class DemandTransferApp {
         this.lastExecutionSummary = {}; // Store last execution summary for display
         this.variantCycleDates = {}; // Store SOS/EOS data: { dfuCode: { partCode: { sos: date, eos: date } } }
         this.hasVariantCycleData = false; // Flag to check if cycle data is loaded
+        this.keepZeroVariants = true; // Flag to keep variants with 0 demand visible
         
         this.init();
     }
     
     init() {
-        console.log('🚀 DFU Demand Transfer App v2.11.0 - Build: 2025-08-05-undo-fix');
-        console.log('📋 Fixed undo function to properly restore original data');
+        console.log('🚀 DFU Demand Transfer App v2.12.0 - Build: 2025-08-05-keep-zero-variants');
+        console.log('📋 Keep source variants visible with 0 demand after transfer');
         this.render();
         this.attachEventListeners();
     }
@@ -1015,6 +1016,12 @@ class DemandTransferApp {
         
         console.log(`Found ${dfuRecords.length} records for DFU ${dfuCode} before consolidation`);
         
+        // Get all unique part numbers for this DFU (to ensure we keep all variants)
+        const allPartNumbers = new Set();
+        dfuRecords.forEach(record => {
+            allPartNumbers.add(record[partNumberColumn].toString());
+        });
+        
         // Create a map of consolidated records
         const consolidatedMap = new Map();
         
@@ -1052,6 +1059,37 @@ class DemandTransferApp {
                 consolidatedMap.set(key, consolidatedRecord);
             }
         });
+        
+        // If keepZeroVariants is true, ensure all original part numbers have at least one record
+        if (this.keepZeroVariants) {
+            allPartNumbers.forEach(partNumber => {
+                // Check if this part number has any records in the consolidated map
+                let hasRecord = false;
+                consolidatedMap.forEach((record, key) => {
+                    if (key.startsWith(`${partNumber}|`)) {
+                        hasRecord = true;
+                    }
+                });
+                
+                // If no record exists for this part number, create one with 0 demand
+                if (!hasRecord) {
+                    // Use the first record as a template
+                    const templateRecord = dfuRecords.find(r => r[partNumberColumn].toString() === partNumber) || dfuRecords[0];
+                    if (templateRecord) {
+                        const zeroRecord = { ...templateRecord };
+                        zeroRecord[partNumberColumn] = partNumber;
+                        zeroRecord[demandColumn] = 0;
+                        zeroRecord['Transfer History'] = 'All demand transferred';
+                        
+                        // Create a key for the first week/location
+                        const key = `${partNumber}|${zeroRecord[weekNumberColumn]}|${zeroRecord[sourceLocationColumn]}`;
+                        consolidatedMap.set(key, zeroRecord);
+                        
+                        console.log(`Created zero-demand record for ${partNumber} to keep variant visible`);
+                    }
+                }
+            });
+        }
         
         console.log(`Consolidated into ${consolidatedMap.size} unique records`);
         
@@ -1241,8 +1279,8 @@ class DemandTransferApp {
                             </p>
                         </div>
                         <div class="text-right text-xs text-gray-400">
-                            <p>Version 2.11.0</p>
-                            <p>Build: 2025-08-05-undo-fix</p>
+                            <p>Version 2.12.0</p>
+                            <p>Build: 2025-08-05-keep-zero-variants</p>
                         </div>
                     </div>
                 </div>
