@@ -7,8 +7,8 @@ const cycleFileInput = document.getElementById('cycleFileInput');
                 }
             });
         }// DFU Demand Transfer Management Application
-// Version: 2.12.0 - Build: 2025-08-05-keep-zero-variants
-// Keep source variants visible with 0 demand after transfer
+// Version: 2.13.0 - Build: 2025-08-05-show-zero-variants
+// Show variants with 0 demand after transfer
 
 class DemandTransferApp {
     constructor() {
@@ -35,8 +35,8 @@ class DemandTransferApp {
     }
     
     init() {
-        console.log('🚀 DFU Demand Transfer App v2.12.0 - Build: 2025-08-05-keep-zero-variants');
-        console.log('📋 Keep source variants visible with 0 demand after transfer');
+        console.log('🚀 DFU Demand Transfer App v2.13.0 - Build: 2025-08-05-show-zero-variants');
+        console.log('📋 Show variants with 0 demand after transfer');
         this.render();
         this.attachEventListeners();
     }
@@ -359,7 +359,7 @@ class DemandTransferApp {
                     // Get part description from the first record
                     const partDescription = partCodeRecords[0] ? partCodeRecords[0][partDescriptionColumn] : '';
                     
-                    // Include all variants that have records
+                    // Include all variants that have records (including those with 0 demand)
                     if (partCodeRecords.length > 0) {
                         // Group records by week for granular control
                         const weeklyRecords = {};
@@ -393,7 +393,9 @@ class DemandTransferApp {
                 
                 // Always include DFUs that have completed transfers, even if they now have only one variant
                 const activeVariants = Object.keys(variantDemand);
-                if (activeVariants.length > 1 || isCompleted) {
+                
+                // For completed transfers or multi-variant DFUs, include all variants (even with 0 demand)
+                if (activeVariants.length > 1 || isCompleted || (isCompleted && this.keepZeroVariants)) {
                     multiVariants[dfuCode] = {
                         variants: activeVariants,
                         variantDemand,
@@ -417,9 +419,6 @@ class DemandTransferApp {
                         records: variantDemand[v].recordCount,
                         description: variantDemand[v].partDescription
                     })));
-                } else if (activeVariants.length === 1) {
-                    // If only one variant remains and no completion record, it's no longer multi-variant
-                    multiVariantCount--;
                 }
             }
         });
@@ -1279,8 +1278,8 @@ class DemandTransferApp {
                             </p>
                         </div>
                         <div class="text-right text-xs text-gray-400">
-                            <p>Version 2.12.0</p>
-                            <p>Build: 2025-08-05-keep-zero-variants</p>
+                            <p>Version 2.13.0</p>
+                            <p>Build: 2025-08-05-show-zero-variants</p>
                         </div>
                     </div>
                 </div>
