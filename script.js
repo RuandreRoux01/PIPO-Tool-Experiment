@@ -1,6 +1,6 @@
 // DFU Demand Transfer Management Application
-// Version: 2.15.0 - Build: 2025-08-05-type-safety
-// Added comprehensive type handling for all data comparisons
+// Version: 2.16.0 - Build: 2025-08-05-variant-display-fix
+// Fixed variant count display and improved DFU list scrolling
 
 class DemandTransferApp {
     constructor() {
@@ -1376,7 +1376,7 @@ class DemandTransferApp {
                         <div class="relative dfu-list-container">
                             <div class="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-gray-50 to-transparent pointer-events-none z-10"></div>
                             <div class="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10"></div>
-                            <div class="space-y-2 max-h-[600px] overflow-y-auto pr-1 scrollbar-custom">
+                            <div class="space-y-2 max-h-[580px] overflow-y-auto pr-1 scrollbar-custom">
                                 ${Object.keys(this.filteredDFUs).map(dfuCode => {
                                 const dfuData = this.filteredDFUs[dfuCode];
                                 if (!dfuData || !dfuData.variants) return '';
@@ -1387,7 +1387,7 @@ class DemandTransferApp {
                                             <div>
                                                 <h4 class="font-medium text-gray-800">DFU: ${dfuCode}</h4>
                                                 <p class="text-sm text-gray-600">
-                                                    ${dfuData.plantLocation ? `Plant ${dfuData.plantLocation} • ` : ''}${dfuData.isCompleted ? `1 variant (consolidated)` : `${dfuData.variants.length} variants`}
+                                                    ${dfuData.plantLocation ? `Plant ${dfuData.plantLocation} • ` : ''}${dfuData.variants.length} variant${dfuData.variants.length > 1 ? 's' : ''}${dfuData.isCompleted ? ' (transfer completed)' : ''}
                                                 </p>
                                             </div>
                                             <div class="text-right">
