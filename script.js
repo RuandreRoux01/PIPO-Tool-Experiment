@@ -27,8 +27,8 @@ class DemandTransferApp {
     }
     
     init() {
-        console.log('🚀 DFU Demand Transfer App v2.15.0 - Build: 2025-08-05-type-safety');
-        console.log('📋 Added comprehensive type handling for all data comparisons');
+        console.log('🚀 DFU Demand Transfer App v2.16.0 - Build: 2025-08-05-variant-display-fix');
+        console.log('📋 Fixed variant count display and improved DFU list scrolling');
         this.render();
         this.attachEventListeners();
     }
@@ -1312,8 +1312,8 @@ class DemandTransferApp {
                             </p>
                         </div>
                         <div class="text-right text-xs text-gray-400">
-                            <p>Version 2.15.0</p>
-                            <p>Build: 2025-08-05-type-safety</p>
+                            <p>Version 2.16.0</p>
+                            <p>Build: 2025-08-05-variant-display-fix</p>
                         </div>
                     </div>
                 </div>
@@ -1373,10 +1373,10 @@ class DemandTransferApp {
                             </svg>
                             DFUs Requiring Review (${Object.keys(this.filteredDFUs).length})
                         </h3>
-                        <div class="relative">
+                        <div class="relative dfu-list-container">
                             <div class="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-gray-50 to-transparent pointer-events-none z-10"></div>
                             <div class="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10"></div>
-                            <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1 scrollbar-custom">
+                            <div class="space-y-2 max-h-[600px] overflow-y-auto pr-1 scrollbar-custom">
                                 ${Object.keys(this.filteredDFUs).map(dfuCode => {
                                 const dfuData = this.filteredDFUs[dfuCode];
                                 if (!dfuData || !dfuData.variants) return '';
