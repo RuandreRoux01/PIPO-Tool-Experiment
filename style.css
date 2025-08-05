@@ -151,6 +151,37 @@
     background-color: #eff6ff;
 }
 
+/* Custom scrollbar for DFU list */
+.scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Ensure the DFU list container has a fixed height */
+.dfu-list-container {
+    position: relative;
+    height: 600px;
+    overflow: hidden;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .grid-responsive {
@@ -160,6 +191,10 @@
     .flex-responsive {
         flex-direction: column;
         gap: 16px;
+    }
+    
+    .dfu-list-container {
+        height: 400px;
     }
 }
 
