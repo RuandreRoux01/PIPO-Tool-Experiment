@@ -151,12 +151,7 @@
     background-color: #eff6ff;
 }
 
-/* Custom scrollbar for DFU list */
-.scrollbar-custom {
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 #f1f5f9;
-}
-
+/* Custom scrollbar for webkit browsers */
 .scrollbar-custom::-webkit-scrollbar {
     width: 8px;
 }
@@ -175,11 +170,15 @@
     background: #94a3b8;
 }
 
-/* Ensure the DFU list container has a fixed height */
-.dfu-list-container {
-    position: relative;
-    height: 600px;
-    overflow: hidden;
+/* Firefox scrollbar */
+.scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Force scrollbar to always show */
+.scrollbar-custom {
+    overflow-y: scroll !important;
 }
 
 /* Responsive design */
@@ -191,10 +190,6 @@
     .flex-responsive {
         flex-direction: column;
         gap: 16px;
-    }
-    
-    .dfu-list-container {
-        height: 400px;
     }
 }
 
