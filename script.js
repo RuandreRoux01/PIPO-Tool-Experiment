@@ -7,12 +7,13 @@ const cycleFileInput = document.getElementById('cycleFileInput');
                 }
             });
         }// DFU Demand Transfer Management Application
-// Version: 2.9.1 - Build: 2025-07-29-ui-improved
-// Fixed UI: Removed redundant header, added execution summary
+// Version: 2.11.0 - Build: 2025-08-05-undo-fix
+// Fixed undo function to properly restore original data
 
 class DemandTransferApp {
     constructor() {
         this.rawData = [];
+        this.originalRawData = []; // Backup of original data for undo functionality
         this.multiVariantDFUs = {};
         this.filteredDFUs = {};
         this.selectedDFU = null;
@@ -33,8 +34,8 @@ class DemandTransferApp {
     }
     
     init() {
-        console.log('🚀 DFU Demand Transfer App v2.10.0 - Build: 2025-07-29-ui-improved');
-        console.log('📋 Fixed UI: Removed redundant header, added execution summary, added comments');
+        console.log('🚀 DFU Demand Transfer App v2.11.0 - Build: 2025-08-05-undo-fix');
+        console.log('📋 Fixed undo function to properly restore original data');
         this.render();
         this.attachEventListeners();
     }
@@ -234,6 +235,8 @@ class DemandTransferApp {
                 console.log('Sample record:', data[0]);
                 console.log('Available columns:', Object.keys(data[0]));
                 this.rawData = data;
+                // Create a deep copy of the original data for undo functionality
+                this.originalRawData = JSON.parse(JSON.stringify(data));
                 this.processMultiVariantDFUs(data);
                 this.isProcessed = true;
                 this.showNotification(`Successfully loaded ${data.length} records`);
@@ -1122,14 +1125,18 @@ class DemandTransferApp {
         // Clear execution summary
         delete this.lastExecutionSummary[dfuCode];
         
+        // Restore the original data from backup
+        console.log('Restoring original data from backup...');
+        this.rawData = JSON.parse(JSON.stringify(this.originalRawData));
+        
         // Force recalculation of multi-variant DFUs
         this.multiVariantDFUs = {};
         this.filteredDFUs = {};
         
-        // Re-process the data to show the variants again
+        // Re-process the data to show the variants again with original quantities
         this.processMultiVariantDFUs(this.rawData);
         
-        this.showNotification(`Transfer undone for DFU ${dfuCode}. You can now make new transfers.`, 'success');
+        this.showNotification(`Transfer undone for DFU ${dfuCode}. Original data restored with all variants and quantities.`, 'success');
         this.render();
     }
     
@@ -1234,8 +1241,8 @@ class DemandTransferApp {
                             </p>
                         </div>
                         <div class="text-right text-xs text-gray-400">
-                            <p>Version 2.9.1</p>
-                            <p>Build: 2025-07-29-ui-improved</p>
+                            <p>Version 2.11.0</p>
+                            <p>Build: 2025-08-05-undo-fix</p>
                         </div>
                     </div>
                 </div>
