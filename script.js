@@ -1,6 +1,6 @@
 // DFU Demand Transfer Management Application
-// Version: 2.17.0 - Build: 2025-08-05-date-format-fix
-// Fixed Calendar.week date format in exported Excel files
+// Version: 2.18.0 - Build: 2025-08-05-scrolling-fix
+// Fixed DFU list scrolling and Calendar.week date format
 
 class DemandTransferApp {
     constructor() {
@@ -27,8 +27,8 @@ class DemandTransferApp {
     }
     
     init() {
-        console.log('🚀 DFU Demand Transfer App v2.17.0 - Build: 2025-08-05-date-format-fix');
-        console.log('📋 Fixed Calendar.week date format in exported Excel files');
+        console.log('🚀 DFU Demand Transfer App v2.18.0 - Build: 2025-08-05-scrolling-fix');
+        console.log('📋 Fixed DFU list scrolling and Calendar.week date format');
         this.render();
         this.attachEventListeners();
     }
@@ -1336,8 +1336,8 @@ class DemandTransferApp {
                             </p>
                         </div>
                         <div class="text-right text-xs text-gray-400">
-                            <p>Version 2.17.0</p>
-                            <p>Build: 2025-08-05-date-format-fix</p>
+                            <p>Version 2.18.0</p>
+                            <p>Build: 2025-08-05-scrolling-fix</p>
                         </div>
                     </div>
                 </div>
@@ -1397,10 +1397,10 @@ class DemandTransferApp {
                             </svg>
                             DFUs Requiring Review (${Object.keys(this.filteredDFUs).length})
                         </h3>
-                        <div class="relative dfu-list-container">
+                        <div class="relative" style="height: 580px;">
                             <div class="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-gray-50 to-transparent pointer-events-none z-10"></div>
                             <div class="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10"></div>
-                            <div class="space-y-2 max-h-[580px] overflow-y-auto pr-1 scrollbar-custom">
+                            <div class="space-y-2 h-full overflow-y-auto pr-1 scrollbar-custom" style="padding-top: 16px; padding-bottom: 16px;">>
                                 ${Object.keys(this.filteredDFUs).map(dfuCode => {
                                 const dfuData = this.filteredDFUs[dfuCode];
                                 if (!dfuData || !dfuData.variants) return '';
